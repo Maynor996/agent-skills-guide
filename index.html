@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 AI 编程助手学会做视频、做 PPT：Agent Skills 入门与安装全指南</title>
+<meta name="description" content="一、Agent Skills 是什么 用 Claude Code、Codex、Cursor 这类编码 Agent 时，你可能遇到过这种情况： 同一个任务（比如'做一张文章封面'或'把更新日志做成短视频'），每次都要重新写一大段提示词， 效果还时好时坏。 Agent Skill 就是为了解决这个问题。 简单说，一个 Sk">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f5f0;--card:#fff;--text:#1a1a1a;--muted:#5c5c5c;--accent:#1a73e8;--border:#e6e2d8;--code-bg:#f0eee8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:17px;line-height:1.85;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+article{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem 1.75rem 2.5rem;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+h1{font-family:"Noto Serif SC",serif;font-size:clamp(1.55rem,4vw,2rem);line-height:1.4;margin:0 0 1.25rem;font-weight:700}
+h2{font-family:"Noto Serif SC",serif;font-size:1.35rem;margin:2.25rem 0 .9rem;padding-top:.5rem;border-top:1px solid var(--border);font-weight:700}
+h2:first-of-type{border-top:none;padding-top:0}h3{font-size:1.1rem;margin:1.5rem 0 .6rem}
+p{margin:.9rem 0}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+ul,ol{padding-left:1.35rem;margin:.8rem 0}li{margin:.35rem 0}strong{font-weight:700}
+img{display:block;max-width:100%;height:auto;margin:1.1rem auto .35rem;border-radius:10px;border:1px solid var(--border);background:#fafafa}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-size:.88rem;line-height:1.55}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+pre code{background:none;padding:0}
+blockquote{margin:1rem 0;padding:.2rem 0 .2rem 1rem;border-left:3px solid var(--accent);color:var(--muted)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
+th,td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top}th{background:#f3f1eb}
+.meta{color:var(--muted);font-size:.92rem;margin-bottom:1.5rem}
+.pages-banner{margin:0 0 1.25rem;padding:.75rem 1rem;background:#eef5ff;border:1px solid #d0e2ff;border-radius:10px;font-size:.95rem}
+footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--muted);font-size:.88rem}
+</style></head><body><div class="wrap"><article>
+<div class="pages-banner">在线阅读（GitHub Pages）：<a href="https://maynor996.github.io/agent-skills-guide/">https://maynor996.github.io/agent-skills-guide/</a></div>
+<h1>让 AI 编程助手学会做视频、做 PPT：Agent Skills 入门与安装全指南</h1>
+<div class="meta">原文：<a href="https://blog.csdn.net/xianyu120/article/details/167177082">https://blog.csdn.net/xianyu120/article/details/167177082</a></div>
+<h3>一、Agent Skills 是什么</h3>
+<p>用 Claude Code、Codex、Cursor 这类编码 Agent 时，你可能遇到过这种情况：<br />
+同一个任务（比如"做一张文章封面"或"把更新日志做成短视频"），每次都要重新写一大段提示词，<br />
+效果还时好时坏。</p>
+<p><strong>Agent Skill 就是为了解决这个问题。</strong> 简单说，一个 Skill 就是一个文件夹，里面至少有一个 <code>SKILL.md</code>：</p>
+<pre><code>my-skill/
+├── SKILL.md        # 说明：这个技能做什么、什么时候用、按什么步骤做
+├── scripts/        # 可选：辅助脚本
+└── assets/         # 可选：模板、素材
+</code></pre>
+<p><code>SKILL.md</code> 开头的元信息里写着技能名称和用途。Agent 平时只读这一小段，<br />
+等你的任务和某个技能匹配了，才会去加载完整的说明和脚本。<br />
+你可以把它理解成"给 Agent 的岗位 SOP"：写一次，以后反复用。</p>
+<p>现在支持 SKILL.md 标准的 Agent 有 Claude Code、Codex、Cursor、Gemini CLI、OpenCode 等。</p>
+<h3>二、安装到哪里</h3>
+<p>不同 Agent 读取技能的目录不一样：</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>用户级技能目录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td><code>~/.claude/skills/</code></td>
+</tr>
+<tr>
+<td>Codex</td>
+<td><code>~/.agents/skills/</code></td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td><code>~/.agents/skills/</code></td>
+</tr>
+</tbody>
+</table>
+<h4>方式 1：手动安装（最透明）</h4>
+<p>以 GitHub 上的某个技能仓库为例：</p>
+<pre><code># 1. 克隆仓库
+git clone https://github.com/&lt;作者&gt;/&lt;仓库&gt;.git /tmp/skill-repo
+
+# 2. 把技能文件夹复制到对应目录（以 Claude Code 为例）
+mkdir -p ~/.claude/skills
+cp -r /tmp/skill-repo/skills/&lt;技能名&gt; ~/.claude/skills/
+
+# Codex / Cursor 用户换成：
+# mkdir -p ~/.agents/skills &amp;&amp; cp -r /tmp/skill-repo/skills/&lt;技能名&gt; ~/.agents/skills/
+</code></pre>
+<p>装完后<strong>重启一次 Agent 会话</strong> ，然后直接用自然语言描述任务就行，不用专门去"调用"它。</p>
+<h4>方式 2：让 Agent 自己装</h4>
+<p>直接对 Agent 说：“帮我把 https://github.com/xxx/yyy 里的 zzz 技能安装到我的 skills 目录”，<br />
+它会自己完成克隆和复制。我自己常用 SkillHub（https://skills-hub.chatgpt-plus.workers.dev/zh）这个目录站找技能，<br />
+它的每个详情页都有一键复制的安装提示词，复制后粘贴给 Agent 就行，省得自己拼路径。</p>
+<blockquote>
+<p>安全提示：Skill 可能带脚本，安装前最好看一眼 SKILL.md 和 scripts，只装来源清楚的技能。</p>
+</blockquote>
+<h3>三、3 个推荐技能和使用步骤</h3>
+<p>下面 3 个都是开源免费的，用之前请看一下各自仓库的许可证。</p>
+<h4>推荐 1：Humanizer-zh（歸藏 op7418）—— 去掉中文文案的"AI 味"</h4>
+<p><strong>适合</strong> ：写公众号、技术文章、产品文案，嫌 AI 写出来的东西太套路的人。</p>
+<p>步骤：</p>
+<ol>
+<li>克隆 <code>op7418/Humanizer-zh</code>，把技能文件夹复制到 <code>~/.claude/skills/</code>（Codex / Cursor 复制到 <code>~/.agents/skills/</code>）。</li>
+<li>重启会话，把一段 AI 生成的文字发给 Agent：“帮我把这段改得更像人写的，保留原意。”</li>
+<li>对比改写前后的版本，根据需要再让它调整语气。</li>
+</ol>
+<h4>推荐 2：baoyu-skills（宝玉 JimLiu）—— 内容创作工具箱</h4>
+<p><strong>适合</strong> ：经常要做文章配图、封面、内容排版的写作者。</p>
+<p>步骤：</p>
+<ol>
+<li>克隆 <code>JimLiu/baoyu-skills</code>。仓库里有多个技能，按需挑选，复制到 skills 目录。</li>
+<li>看一下每个技能的 SKILL.md，确认需要准备什么（有的技能需要配置图像生成的 API）。</li>
+<li>对 Agent 说出具体需求，比如"给这篇文章做一张封面图"，Agent 会匹配到对应技能。</li>
+</ol>
+<h4>推荐 3：huashu-design（花叔 alchaincyf）—— 设计类产出</h4>
+<p><strong>适合</strong> ：想让 Agent 做出更有设计感的页面、视觉稿的开发者。</p>
+<p>步骤：</p>
+<ol>
+<li>克隆 <code>alchaincyf/huashu-design</code>，复制技能文件夹到 skills 目录。</li>
+<li>重启会话，描述需求：“做一个产品介绍页，风格简洁、偏杂志感。”</li>
+<li>在 Agent 给出的初稿上继续迭代。想做动效的话，可以再试试同一作者的 <code>huashu-art-motion</code>。</li>
+</ol>
+<h3>四、怎么找到更多好用的技能</h3>
+<p>技能多了以后，最麻烦的是<strong>不知道装上能得到什么</strong> 。我的经验：</p>
+<ol>
+<li><strong>先看产出样例再装</strong> ：选有成品示例的技能。</li>
+<li><strong>看"适合谁 / 不适合谁"</strong> ：别把一堆用不上的技能全装上，会干扰 Agent 匹配。</li>
+<li><strong>认准许可证和原作者</strong> ：优先选 MIT / Apache-2.0 这类宽松许可证的仓库。</li>
+</ol>
+<p>SkillHub 就是按这个思路整理的：67 个技能，可以按视频 / 图片 / 幻灯片 / 网页 / 文档筛选，<br />
+每个页面写了产出内容、适用人群、前置条件和原作者 / 许可证。还有 22 条从 X 帖子整理的<br />
+精选提示词，附原帖链接。收录的开源技能都免费，作者自研的 10 个视频 / 图片模板技能是付费的 Pro，有需要再看。</p>
+<h3>五、小结</h3>
+<ul>
+<li>Skill = 一个带 SKILL.md 的文件夹，相当于给 Agent 的可复用 SOP；</li>
+<li>Claude Code 装到 <code>~/.claude/skills/</code>，Codex / Cursor 装到 <code>~/.agents/skills/</code>；</li>
+<li>先看效果、看许可证、按需安装。</li>
+</ul>
+<p>有问题欢迎评论区交流，你常用哪些技能也欢迎推荐。</p>
+<footer>镜像自 CSDN @xianyu120 · 内容以原文为准</footer>
+</article></div></body></html>
